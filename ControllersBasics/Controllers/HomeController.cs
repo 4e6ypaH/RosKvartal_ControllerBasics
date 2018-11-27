@@ -10,6 +10,17 @@ namespace ControllersBasics.Controllers
 {
     public class HomeController : Controller
     {
+        public void GetContext()
+        {
+            HttpContext.Response.Write("Привет, мир!!!");
+            string browser = Request.Browser.Browser;
+            string user_agent = HttpContext.Request.UserAgent;
+            string url = HttpContext.Request.RawUrl;
+            string ip = HttpContext.Request.UserHostAddress;
+            string referrer = HttpContext.Request.UrlReferrer == null ? "" : HttpContext.Request.UrlReferrer.AbsoluteUri;
+            HttpContext.Response.Write("<p>Browser: " + browser + "</p><p>User-Agent: " + user_agent + "</p><p>Url запроса: " + url +
+                "</p><p>Реферер: " + referrer + "</p><p>IP-адрес: " + ip + "</p>");
+        }
         public FilePathResult GetFile()
         {
             string file_path = Server.MapPath("~/Files/test.txt");
@@ -38,9 +49,18 @@ namespace ControllersBasics.Controllers
             return File(fs, file_type, file_name);
         }
 
+        public string GetData()
+        {
+            string id = HttpContext.Request.Cookies["id"].Value;
+            var val = Session["name"];
+            return val.ToString();
+        }
+
         public ViewResult Index()
         {
             //ViewData["Head"] = "Привет, мир!";
+            Session["name"] = "Tom";
+            HttpContext.Response.Cookies["id"].Value = "ca-4353w";   
             ViewBag.Head = "Привет, мир!";
             ViewBag.Fruit = new List<string>
             {
