@@ -1,6 +1,7 @@
 ﻿using ControllersBasics.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,9 +10,42 @@ namespace ControllersBasics.Controllers
 {
     public class HomeController : Controller
     {
-
-        public ActionResult Index()
+        public FilePathResult GetFile()
         {
+            string file_path = Server.MapPath("~/Files/test.txt");
+            //string path= "C://files//test.txt";
+            string file_type = "application/octet-stream";
+            string file_name = "test.txt";
+            return File(file_path, file_type, file_name);
+        }
+
+        public FileContentResult GetBytes()
+        {
+            string path = Server.MapPath("~/Files/test.txt");
+            byte[] mas = System.IO.File.ReadAllBytes(path);
+            string file_type = "application/txt";
+            string file_name = "test.txt";
+            return File(mas, file_type, file_name);
+        }
+
+        public FileStreamResult GetStream()
+        {
+            string path = Server.MapPath("~/Files/test.txt");
+            //Объект Stream
+            FileStream fs = new FileStream(path, FileMode.Open);
+            string file_type = "application/txt";
+            string file_name = "test.txt";
+            return File(fs, file_type, file_name);
+        }
+
+        public ViewResult Index()
+        {
+            //ViewData["Head"] = "Привет, мир!";
+            ViewBag.Head = "Привет, мир!";
+            ViewBag.Fruit = new List<string>
+            {
+                "яблоки", "груши", "вишни"
+            };
             return View();
         }
 
@@ -25,6 +59,16 @@ namespace ControllersBasics.Controllers
         public ActionResult GetHtml()
         {
             return new HtmlResult("<h2>Привет мир!</h2>");
+        }
+
+        public ActionResult GetVoid(int id)
+        {
+            if (id > 3)
+            {
+                // return RedirectToAction("Square", "Home", new { a = 10, h = 12});
+                return new HttpUnauthorizedResult();
+            }
+            return View("About");
         }
 
         [HttpGet]
